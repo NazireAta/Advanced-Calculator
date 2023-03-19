@@ -158,16 +158,6 @@ int main() {
     ans = *and(left_shift(&d,&e),or(right_shift(&f,&g),&h));
     printf("ans = %d\n",ans);
 
-    char* data = "Hello World!";
-    printf("%s\n",data);
-    int i = 3;
-    char one[i];
-    char two[strlen(data)-i-1];
-    strncpy(one, data, i);
-    strcpy(two, &data[i+1]);
-
-    printf("%s\n",one);
-    printf("%s\n",two);
             
 
 }
