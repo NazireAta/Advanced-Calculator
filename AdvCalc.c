@@ -80,15 +80,29 @@ int *right_shift(int *ap, int *ip) {
     x= &ans;
     return x;
 }
-
+/*
+int search(char* str, char to_find) {
+    int open_parentheses = 0;
+    for(int i = 0; i<strlen(str); i++) {
+        if(str[i] == '(') {
+            open_parentheses++;
+        }
+        else if(str[i] == ')') {open_parentheses--;}
+        else if(open_parentheses==0) {
+            if(str[i]==to_find) {return i;}
+        }
+    }
+} 
+*/
 void divide(struct node* root) {
-    bool isTerminal = false;
+    bool isTerminal = true; //update if /*+- are seen
     int open_parentheses = 0;
     char *data = root->data;
     for(int i = 0; i<strlen(data); i++) {
         char curr = data[i];
-        int parentheses_begin = 0;  //niye actigimi unuttum
+        int parentheses_begin = 0;  //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
         if(curr == '(') {
+        isTerminal = false;
             open_parentheses++;
             if(open_parentheses== 0) {parentheses_begin = i;}
         }
@@ -96,44 +110,72 @@ void divide(struct node* root) {
         else if(open_parentheses==0) {
             char one[i];
             char two[strlen(data)-i-1];
+            int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
             switch(curr) {
                 case '|':
+                    isTerminal = false;
+                    /*
                     strncpy(one, data, i);
                     strcpy(two, &data[i+1]);
                     root->left = newNode(0, one, NULL);
                     root->right = newNode(0,two,NULL);
                     root->operation = "|";
+                    */
+                    oridx = i;
                     break;
                 case '&':
-                    strncpy(one, data, i);
-                    strcpy(two, &data[i+1]);
-                    root->left = newNode(0, one, NULL);
-                    root->right = newNode(0,two,NULL);
-                    root->operation = "&";
+                    isTerminal = false;
+                    andidx = i;
                     break;
                 case '+':
-                    strncpy(one, data, i);
-                    strcpy(two, &data[i+1]);
-                    root->left = newNode(0, one, NULL);
-                    root->right = newNode(0,two,NULL);
-                    root->operation = "+";
+                    isTerminal = false;
+                    plusidx = i;
                     break;
                 case '-':
-                    strncpy(one, data, i);
-                    strcpy(two, &data[i+1]);
-                    root->left = newNode(0, one, NULL);
-                    root->right = newNode(0,two,NULL);
-                    root->operation = "-";
+                    isTerminal = false;
+                    minusidx = i;
                     break;
                 case '*':
-                    strncpy(one, data, i);
-                    strcpy(two, &data[i+1]);
-                    root->left = newNode(0, one, NULL);
-                    root->right = newNode(0,two,NULL);
-                    root->operation = "*";
+                    isTerminal = false;
+                    timesidx = i;
                     break;    
                 default:
                     break;
+            }
+            if(oridx != -1) {
+                strncpy(one, data, oridx);
+                strcpy(two, &data[oridx+1]);
+                root->left = newNode(0, one, NULL);
+                root->right = newNode(0,two,NULL);
+                root->operation = "|";
+            }
+            else if(andidx != -1) {
+                strncpy(one, data, andidx);
+                strcpy(two, &data[andidx+1]);
+                root->left = newNode(0, one, NULL);
+                root->right = newNode(0,two,NULL);
+                root->operation = "&";
+            }
+            else if(plusidx != -1) {
+                strncpy(one, data, plusidx);
+                strcpy(two, &data[plusidx+1]);
+                root->left = newNode(0, one, NULL);
+                root->right = newNode(0,two,NULL);
+                root->operation = "+";
+            }
+            else if(minusidx != -1) {
+                strncpy(one, data, minusidx);
+                strcpy(two, &data[minusidx+1]);
+                root->left = newNode(0, one, NULL);
+                root->right = newNode(0,two,NULL);
+                root->operation = "-";
+            }
+            else if(timesidx != -1) {
+                strncpy(one, data, timesidx);
+                strcpy(two, &data[timesidx+1]);
+                root->left = newNode(0, one, NULL);
+                root->right = newNode(0,two,NULL);
+                root->operation = "*";
             }
         }
     }
