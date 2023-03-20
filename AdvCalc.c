@@ -26,6 +26,54 @@ struct node* newNode(int value, char* data, char *operation) { //value is null i
     return (node);
 }
 
+/*struct stack {
+    int top;
+    int capacity;
+    int* array;
+};
+
+struct stack* newStack(int capacity)
+{
+    struct stack* stack = (struct stack*)malloc(sizeof(struct stack));
+    stack->capacity = capacity;
+    stack->top = -1;
+    stack->array = (int*)malloc(stack->capacity * sizeof(int));
+    return stack;
+}
+
+void push(struct stack* stack, struct node* item)
+{
+    stack->array[++stack->top] = item;
+}
+
+struct node* pop(struct stack* stack)
+{
+    return stack->array[stack->top--];
+}
+
+struct node* peek(struct stack* stack)
+{
+    return stack->array[stack->top];
+}
+
+//stackte push ve pop var peek e gerek yok tree yi dönüp ekle sonra hesaplarken popla teker teker
+//stack gereksiz 
+void addToStack(struct stack* stack, struct node* root) {
+    push(stack, root);
+    while (true)
+    {
+        if(root->left!=NULL){
+            struct node* temp =root->left;
+            push(stack, temp);
+        }
+        if(root->right!=NULL) {
+
+        }
+         
+    }
+    
+}*/
+
 int *plus(int *ap, int *bp) {
     int* x;
     int ans = (*ap + *bp);
@@ -139,13 +187,13 @@ void divide(struct node* root) {
     int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
     char one[strlen(data)];
     char two[strlen(data)];
+    int parentheses_begin = -1;   //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
+    //hala -1 se hiç parantez yok demektir ilk indexte de olabilir
     for(int i = 0; i<strlen(data); i++) {
-        char curr = data[i];
-        int parentheses_begin = 0;  //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
-        if(curr == '(') {
-        isTerminal = false;
+        char curr = data[i]; 
+        if(curr == '(') { //parantez varsa bence is terminal true kalsın çünkü parantez olup operatörler olmayabilir hem fonksiyonları kontrol ederken işimize yarar
             open_parentheses++;
-            if(open_parentheses== 0) {parentheses_begin = i;}
+            if(parentheses_begin == -1) {parentheses_begin = i;}  //parantezin ilk başladığı yerin indexi
         }
         else if(curr == ')') {open_parentheses--;}
         else if(open_parentheses==0) {
@@ -240,11 +288,54 @@ void divide(struct node* root) {
     }
 }
 
+int execute(struct node* root) {
+    if(root->operation==NULL) {
+        root->value=atoi(root->data);
+        return root->value;
+    }
+    else if(root->operation=="+") {
+        root->value=execute(root->left) + execute(root->right);
+    }
+    else if(root->operation=="-"){
+        root->value=execute(root->left) - execute(root->right);
+    }
+    else if(root->operation=="*"){
+        root->value=execute(root->left) * execute(root->right);
+    }
+    else if(root->operation=="&"){
+        root->value=and(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="|"){
+        root->value=or(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="xor"){
+        root->value=xor(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="ls"){
+        root->value=left_shift(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="rs"){
+        root->value=right_shift(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="lr"){
+        root->value=left_rotate(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="rr"){
+        root->value=right_rotate(execute(root->left), execute(root->right));
+    }
+    else if(root->operation=="not"){
+        root->value=not(execute(root->left));
+    }
+    
+    return root->value;
+}
+
 int main() {
     int t = 40, qt = 15;
     int x = 2;
     //int ans = *or(and(&t,&t),plus(&t, xor(&t, left_shift(&qt, &x))));
     int a = 5, b = 3 , c = 7, d = 10, e = 2, f = 15, g = 1, h = 12;
+
 //    int *aa, *bb;
 //    aa = left_shift(&d,&e);
 //    bb = or(right_shift(&f,&g),&h);
