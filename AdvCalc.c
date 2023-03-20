@@ -180,6 +180,10 @@ char* removeWhitespaces(char* input)
     return output;
 }
 
+char* remove_parantheses(char* data) {
+//doldur abla
+}
+
 void divide(struct node* root) {
     bool isTerminal = true; //update if /*+- are seen
     int open_parentheses = 0;
@@ -286,8 +290,23 @@ void divide(struct node* root) {
         root->right = newNode(0,two,NULL);
         root->operation = "*";
     }
+
+    else {
+        char fnc_name[parentheses_begin];
+        strncpy(fnc_name, data, parentheses_begin);
+        switch(fnc_name) {
+            case "":
+                break;
+            case "xor":
+                root->operation="xor"
+                //parantez dengeliyken ilk virgülden ayır
+                break;
+            //devam
+        }
+    }
 }
 
+//TO DO: remove enclosıng parantheses
 int execute(struct node* root) {
     if(root->operation==NULL) {
         root->value=atoi(root->data);
