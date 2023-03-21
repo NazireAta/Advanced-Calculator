@@ -164,6 +164,21 @@ int search_char(char* str, char to_find) {
     }
 } 
 
+char* remove_whitespaces(const char* str) {
+    char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
+    if (!new_str) {
+        return NULL; // error, unable to allocate memory
+    }
+    int j = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isspace(str[i])) { // check if the current character is not a whitespace
+            new_str[j++] = str[i];
+        }
+    }
+    new_str[j] = '\0'; // add null terminator to the new string
+    return new_str;
+}
+
 const char* removeWhitespaces(char* input){
     int i,j;
     char *output=input;
@@ -178,14 +193,18 @@ const char* removeWhitespaces(char* input){
     return output;
 }
 
-const char* remove_parentheses(char* data) { //works right
-    int count=0;
-    for(int i=0;i<strlen(data);i++){
-        if (data[i]=='(') {count++;}
+char* remove_parentheses(const char* data) {
+    int count = 0;
+    for (int i = 0; i < strlen(data); i++) {
+        if (data[i] == '(') {count++;}
     }
-    char output[strlen(data)-2*count+1];
-    strncpy(output,data+count,strlen(data)-2*count);
-    output[strlen(data)-2*count] = 0;
+    char* output = (char*)malloc(strlen(data) - 2 * count + 1);
+    int j = 0;
+    for (int i = 0; i < strlen(data); i++) {
+        if (data[i] == '(' || data[i] == ')') {continue;}
+        output[j++] = data[i];
+    }
+    output[j] = '\0';
     return output;
 }
 
@@ -442,9 +461,9 @@ int main() {
     //printf("ans = %d\n",ans);
     //printf(~12);
 
-    char *data2 = "(((((Hello World!)))))";
+    char *data2 = "((  (((H      ello) ))))";
     char *data22;
-    printf("%s",remove_parentheses(data2));
+    printf("%s",remove_whitespaces(data2));
 
 }
 
