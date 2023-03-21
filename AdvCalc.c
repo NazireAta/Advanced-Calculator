@@ -150,8 +150,8 @@ int *not(int ap) {
     return x;
 }                                       //Test it
 
-/*
-int search(char* str, char to_find) {
+
+int search_char(char* str, char to_find) {
     int open_parentheses = 0;
     for(int i = 0; i<strlen(str); i++) {
         if(str[i] == '(') {
@@ -163,10 +163,8 @@ int search(char* str, char to_find) {
         }
     }
 } 
-*/
 
-char* removeWhitespaces(char* input)                                         
-{
+const char* removeWhitespaces(char* input){
     int i,j;
     char *output=input;
     for (i = 0, j = 0; i < strlen(input); i++,j++)          
@@ -180,8 +178,15 @@ char* removeWhitespaces(char* input)
     return output;
 }
 
-char* remove_parantheses(char* data) {
-//doldur abla
+const char* remove_parentheses(char* data) { //works right
+    int count=0;
+    for(int i=0;i<strlen(data);i++){
+        if (data[i]=='(') {count++;}
+    }
+    char output[strlen(data)-2*count+1];
+    strncpy(output,data+count,strlen(data)-2*count);
+    output[strlen(data)-2*count] = 0;
+    return output;
 }
 
 void divide(struct node* root) {
@@ -289,24 +294,80 @@ void divide(struct node* root) {
         root->left = newNode(0, one, NULL);
         root->right = newNode(0,two,NULL);
         root->operation = "*";
-    }
-
+    }    
     else {
         char fnc_name[parentheses_begin];
-        strncpy(fnc_name, data, parentheses_begin);
-        switch(fnc_name) {
-            case "":
-                break;
-            case "xor":
-                root->operation="xor"
-                //parantez dengeliyken ilk virgülden ayır
-                break;
-            //devam
+        strncpy(fnc_name, data, parentheses_begin); //works right
+        int comma;
+        if(strcmp(fnc_name, "xor") == 0) {
+            comma = search_char(data+parentheses_begin, ',');   //first find where the comma is, returns length of the first input of xor
+            char one[comma +1];                                 
+            char two[strlen(data)-comma-4];                     //the second input is data-first input-5 chars long
+            strncpy(one, data+4, comma);                        //copy the fist input
+            one[comma] = 0;                                     //end string with 0
+            strncpy(two, data+comma+5,strlen(data)-comma-6);    
+            two[strlen(data)-comma-4]=0;
+            root->left = newNode(0, one, NULL);
+            root->right = newNode(0,two,NULL);
+            root->operation = "xor";
+        }
+        else if(strcmp(fnc_name, "ls")){
+            comma = search_char(data+parentheses_begin, ',');
+            char one[comma +1];
+            char two[strlen(data)-comma-3];
+            strncpy(one, data+3, comma);
+            one[comma] = 0;
+            strncpy(two, data+comma+4,strlen(data)-comma-5);
+            two[strlen(data)-comma-3]=0;
+            root->left = newNode(0, one, NULL);
+            root->right = newNode(0,two,NULL);
+            root->operation = "ls";
+        }
+        else if(strcmp(fnc_name, "rs")){
+            comma = search_char(data+parentheses_begin, ',');
+            char one[comma +1];
+            char two[strlen(data)-comma-3];
+            strncpy(one, data+3, comma);
+            one[comma] = 0;
+            strncpy(two, data+comma+4,strlen(data)-comma-5);
+            two[strlen(data)-comma-3]=0;
+            root->left = newNode(0, one, NULL);
+            root->right = newNode(0,two,NULL);
+            root->operation = "rs";
+        }
+        else if(strcmp(fnc_name, "lr")) {
+            comma = search_char(data+parentheses_begin, ',');
+            char one[comma +1];
+            char two[strlen(data)-comma-3];
+            strncpy(one, data+3, comma);
+            one[comma] = 0;
+            strncpy(two, data+comma+4,strlen(data)-comma-5);
+            two[strlen(data)-comma-3]=0;
+            root->left = newNode(0, one, NULL);
+            root->right = newNode(0,two,NULL);
+            root->operation = "lr";
+        }
+        else if(strcmp(fnc_name, "rr")){
+            comma = search_char(data+parentheses_begin, ',');
+            char one[comma +1];
+            char two[strlen(data)-comma-3];
+            strncpy(one, data+3, comma);
+            one[comma] = 0;
+            strncpy(two, data+comma+4,strlen(data)-comma-5);
+            two[strlen(data)-comma-3]=0;
+            root->left = newNode(0, one, NULL);
+            root->right = newNode(0,two,NULL);
+            root->operation = "rr";
+        }
+        else if(strcmp(fnc_name, "not")) {
+            //TO DO
+        }
+        else if(strcmp(fnc_name, "")) {
+            //TO DO
         }
     }
 }
 
-//TO DO: remove enclosıng parantheses
 int execute(struct node* root) {
     if(root->operation==NULL) {
         root->value=atoi(root->data);
@@ -354,6 +415,20 @@ int main() {
     int x = 2;
     //int ans = *or(and(&t,&t),plus(&t, xor(&t, left_shift(&qt, &x))));
     int a = 5, b = 3 , c = 7, d = 10, e = 2, f = 15, g = 1, h = 12;
+    
+    
+/*     char *data = "lr(mersdajsklda,insadlkdkl)";
+    int comma = search_char(data+3,',');
+    char one[comma +1];
+    char two[strlen(data)-comma-3];
+    printf("%d and value %c \n", comma, data[comma]);
+    strncpy(one, data+3, comma);
+    one[comma] = 0;
+    strncpy(two, data+comma+4,strlen(data)-comma-5);
+    two[strlen(data)-comma-3]=0;
+    printf("%s ve de %s \n",one,two); 
+ */
+
 
 //    int *aa, *bb;
 //    aa = left_shift(&d,&e);
@@ -365,9 +440,11 @@ int main() {
 //    ans = *and(aa,bb);
     ans = *and(left_shift(&d,&e),or(right_shift(&f,&g),&h));
     //printf("ans = %d\n",ans);
-    printf(~12);
+    //printf(~12);
 
-            
+    char *data2 = "(((((Hello World!)))))";
+    char *data22;
+    printf("%s",remove_parentheses(data2));
 
 }
 
