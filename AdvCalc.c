@@ -26,53 +26,6 @@ struct node* newNode(int value, char* data, char *operation) { //value is null i
     return (node);
 }
 
-/*struct stack {
-    int top;
-    int capacity;
-    int* array;
-};
-
-struct stack* newStack(int capacity)
-{
-    struct stack* stack = (struct stack*)malloc(sizeof(struct stack));
-    stack->capacity = capacity;
-    stack->top = -1;
-    stack->array = (int*)malloc(stack->capacity * sizeof(int));
-    return stack;
-}
-
-void push(struct stack* stack, struct node* item)
-{
-    stack->array[++stack->top] = item;
-}
-
-struct node* pop(struct stack* stack)
-{
-    return stack->array[stack->top--];
-}
-
-struct node* peek(struct stack* stack)
-{
-    return stack->array[stack->top];
-}
-
-//stackte push ve pop var peek e gerek yok tree yi dönüp ekle sonra hesaplarken popla teker teker
-//stack gereksiz 
-void addToStack(struct stack* stack, struct node* root) {
-    push(stack, root);
-    while (true)
-    {
-        if(root->left!=NULL){
-            struct node* temp =root->left;
-            push(stack, temp);
-        }
-        if(root->right!=NULL) {
-
-        }
-         
-    }
-    
-}*/
 
 int *plus(int *ap, int *bp) {
     int* x;
@@ -179,19 +132,6 @@ char* remove_whitespaces(const char* str) {
     return new_str;
 }
 
-const char* removeWhitespaces(char* input){
-    int i,j;
-    char *output=input;
-    for (i = 0, j = 0; i < strlen(input); i++,j++)          
-    {
-        if (input[i]!=' ')                           
-            output[j]=input[i];                     
-        else
-            j--;                                     
-    }
-    output[j]=0;
-    return output;
-}
 
 char* remove_parentheses(const char* data) {
     int count = 0;
@@ -209,7 +149,7 @@ char* remove_parentheses(const char* data) {
 }
 
 void divide(struct node* root) {
-    bool isTerminal = true; //update if /*+- are seen
+    bool isTerminal = true; 
     int open_parentheses = 0;
     char *data = root->data;
     int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
@@ -220,6 +160,7 @@ void divide(struct node* root) {
     for(int i = 0; i<strlen(data); i++) {
         char curr = data[i]; 
         if(curr == '(') { //parantez varsa bence is terminal true kalsın çünkü parantez olup operatörler olmayabilir hem fonksiyonları kontrol ederken işimize yarar
+            isTerminal=false;
             open_parentheses++;
             if(parentheses_begin == -1) {parentheses_begin = i;}  //parantezin ilk başladığı yerin indexi
         }
@@ -228,13 +169,6 @@ void divide(struct node* root) {
             switch(curr) {
                 case '|':
                     isTerminal = false;
-                    /*
-                    strncpy(one, data, i);
-                    strcpy(two, &data[i+1]);
-                    root->left = newNode(0, one, NULL);
-                    root->right = newNode(0,two,NULL);
-                    root->operation = "|";
-                    */
                     if (oridx==-1)
                     {
                         oridx = i;
@@ -325,7 +259,7 @@ void divide(struct node* root) {
             strncpy(one, data+4, comma);                        //copy the fist input
             one[comma] = 0;                                     //end string with 0
             strncpy(two, data+comma+5,strlen(data)-comma-6);    
-            two[strlen(data)-comma-4]=0;
+            two[strlen(data)-comma-6]=0;
             root->left = newNode(0, one, NULL);
             root->right = newNode(0,two,NULL);
             root->operation = "xor";
@@ -337,7 +271,7 @@ void divide(struct node* root) {
             strncpy(one, data+3, comma);
             one[comma] = 0;
             strncpy(two, data+comma+4,strlen(data)-comma-5);
-            two[strlen(data)-comma-3]=0;
+            two[strlen(data)-comma-5]=0;
             root->left = newNode(0, one, NULL);
             root->right = newNode(0,two,NULL);
             root->operation = "ls";
@@ -349,7 +283,7 @@ void divide(struct node* root) {
             strncpy(one, data+3, comma);
             one[comma] = 0;
             strncpy(two, data+comma+4,strlen(data)-comma-5);
-            two[strlen(data)-comma-3]=0;
+            two[strlen(data)-comma-5]=0;
             root->left = newNode(0, one, NULL);
             root->right = newNode(0,two,NULL);
             root->operation = "rs";
@@ -361,7 +295,8 @@ void divide(struct node* root) {
             strncpy(one, data+3, comma);
             one[comma] = 0;
             strncpy(two, data+comma+4,strlen(data)-comma-5);
-            two[strlen(data)-comma-3]=0;
+            //two[strlen(data)-comma-3]=0;  //
+            two[strlen(data)-comma-5]=0;   //böyle doğru veriyo tekrar kontrol ederiz
             root->left = newNode(0, one, NULL);
             root->right = newNode(0,two,NULL);
             root->operation = "lr";
@@ -373,22 +308,41 @@ void divide(struct node* root) {
             strncpy(one, data+3, comma);
             one[comma] = 0;
             strncpy(two, data+comma+4,strlen(data)-comma-5);
-            two[strlen(data)-comma-3]=0;
+            two[strlen(data)-comma-5]=0;
             root->left = newNode(0, one, NULL);
             root->right = newNode(0,two,NULL);
             root->operation = "rr";
         }
         else if(strcmp(fnc_name, "not")) {
-            //TO DO
+            char one[strlen(data)-5];
+            strncpy(one, data+4,strlen(data)-4);
+            one[strlen(data)-5] = 0;
+            root->left=one;
+            root->operation="not";
         }
-        else if(strcmp(fnc_name, "")) {
-            //TO DO
+        else if(strcmp(fnc_name, "")) { //bu hariç hepsinde root left rightlardan devam bunda aynı roottan devam ediyoruz
+            char one[strlen(data)-2];
+            strncpy(one, data+1,strlen(data)-2);
+            root->data=one;
         }
     }
+
+    if (!isTerminal) {
+        if (root->left!=NULL) {
+            divide(root->left);
+            if (root->right!=NULL) {
+            divide(root->right);
+            }
+        }
+        else {
+            divide(root);
+        }        
+    }
+    
 }
 
 int execute(struct node* root) {
-    if(root->operation==NULL) {
+    if(root->operation==NULL) {            //burda isdecimal gibi bi şeyle variable mı sayı mı bak
         root->value=atoi(root->data);
         return root->value;
     }
@@ -430,6 +384,47 @@ int execute(struct node* root) {
 }
 
 int main() {
+
+    char* data = "";
+    while(scanf("%s", data)) {           //Burdan emin değilim
+        data = remove_whitespaces(data);
+        struct node* root;
+
+        int equals = search_char(data, '=');
+        if(equals==strlen(data)){
+            //atama yok
+            root->data=data;
+        }
+        else{
+            //atama var
+            //variable isalphabetic mi diye bak
+            int equals = search_char(data, '=');   //first find where the comma is, returns length of the first input of xor
+            char variable[equals +1];
+            char two[strlen(data)-equals];        // two işlemler          
+            strncpy(variable, data, equals);                    
+            variable[equals] = 0;                                    
+            strncpy(two, data+equals+1,strlen(data)-equals);
+            two[strlen(data)-equals]=0;
+
+            root->data=two;
+        }
+
+        divide(root);
+        int ans = execute(root);
+
+        if (equals==strlen(data)) {
+            printf("%d", ans);
+        }
+        else {
+            // hashtable da char one = ans
+        }
+        
+    }
+    
+    
+
+
+
     int t = 40, qt = 15;
     int x = 2;
     //int ans = *or(and(&t,&t),plus(&t, xor(&t, left_shift(&qt, &x))));
