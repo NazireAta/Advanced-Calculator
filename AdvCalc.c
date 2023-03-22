@@ -117,8 +117,8 @@ int search_char(char* str, char to_find) {
     }
 } 
 
-char* remove_whitespaces(const char* str) {
-    char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
+char* remove_whitespaces(char* s) {
+    /*char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
     if (!new_str) {
         return NULL; // error, unable to allocate memory
     }
@@ -129,7 +129,25 @@ char* remove_whitespaces(const char* str) {
         }
     }
     new_str[j] = '\0'; // add null terminator to the new string
-    return new_str;
+    return new_str;*/
+
+    int size;
+    char *end;
+
+    size = strlen(s);
+
+    if (!size)
+        return s;
+
+    end = s + size - 1;
+    while (end >= s && isspace(*end))
+        end--;
+    end = 0;
+
+    while (*s && isspace(*s))
+        s++;
+
+    return s;
 }
 
 
@@ -148,10 +166,29 @@ char* remove_parentheses(const char* data) {
     return output;
 }
 
+bool is_variable(char* data) {
+    for(int i = 0; i < strlen(data); i+) {
+        if (!isdigit(data[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool is_valid_variable(char* data) {
+    for(int i = 0; i < strlen(data); i+) {
+        if(!isalpha(data[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void divide(struct node* root) {
     bool isTerminal = true; 
     int open_parentheses = 0;
     char *data = root->data;
+    data = remove_whitespaces(data);
     int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
     char one[strlen(data)];
     char two[strlen(data)];
@@ -159,7 +196,7 @@ void divide(struct node* root) {
     //hala -1 se hiç parantez yok demektir ilk indexte de olabilir
     for(int i = 0; i<strlen(data); i++) {
         char curr = data[i]; 
-        if(curr == '(') { //parantez varsa bence is terminal true kalsın çünkü parantez olup operatörler olmayabilir hem fonksiyonları kontrol ederken işimize yarar
+        if(curr == '(') { 
             isTerminal=false;
             open_parentheses++;
             if(parentheses_begin == -1) {parentheses_begin = i;}  //parantezin ilk başladığı yerin indexi
@@ -250,12 +287,13 @@ void divide(struct node* root) {
     }    
     else {
         char fnc_name[parentheses_begin];
-        strncpy(fnc_name, data, parentheses_begin); //works right
+        //strncpy(fnc_name, data, parentheses_begin); //works right
+        strncpy(fnc_name, data, 3);  //başında zaten boşluk yok ilk 3 karakteri alsın "ls " ya da "ls(" diye kontrol edelim
         int comma;
-        if(strcmp(fnc_name, "xor") == 0) {
+        if(strcmp(fnc_name, "xor") == 0) {  //bunlarda şey yapalım xorları ayırıp strip sonra aynı şekilde devam
             comma = search_char(data+parentheses_begin, ',');   //first find where the comma is, returns length of the first input of xor
             char one[comma +1];                                 
-            char two[strlen(data)-comma-4];                     //the second input is data-first input-5 chars long
+            char two[strlen(data)-comma-4];   //4 leri düzeltmek lazım parantez başlangıcı olmalı   //the second input is data-first input-5 chars long
             strncpy(one, data+4, comma);                        //copy the fist input
             one[comma] = 0;                                     //end string with 0
             strncpy(two, data+comma+5,strlen(data)-comma-6);    
@@ -264,7 +302,7 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "xor";
         }
-        else if(strcmp(fnc_name, "ls")){
+        else if(strcmp(fnc_name, "ls ") || strcmp(fnc_name, "ls(")){
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
             char two[strlen(data)-comma-3];
@@ -343,7 +381,18 @@ void divide(struct node* root) {
 
 int execute(struct node* root) {
     if(root->operation==NULL) {            //burda isdecimal gibi bi şeyle variable mı sayı mı bak
-        root->value=atoi(root->data);
+        if(!is_variable) {
+            root->value=atoi(root->data);
+        }
+        else{
+            if(is_valid_variable(root->data)) {
+                //hashten değer getir value ya ver
+            }
+            else {
+                //ERROR
+                return;
+            }
+        }
         return root->value;
     }
     else if(root->operation=="+") {
@@ -387,25 +436,31 @@ int main() {
 
     char* data = "";
     while(scanf("%s", data)) {           //Burdan emin değilim
-        data = remove_whitespaces(data);
         struct node* root;
 
         int equals = search_char(data, '=');
         if(equals==strlen(data)){
             //atama yok
+            data = remove_whitespaces(data); 
             root->data=data;
         }
         else{
             //atama var
             //variable isalphabetic mi diye bak
-            int equals = search_char(data, '=');   //first find where the comma is, returns length of the first input of xor
+
+            int equals = search_char(data, '=');   
             char variable[equals +1];
-            char two[strlen(data)-equals];        // two işlemler          
+            char two[strlen(data)-equals];     // two işlemler          
             strncpy(variable, data, equals);                    
-            variable[equals] = 0;                                    
+            variable[equals] = 0;   
+            variable = remove_whitespaces(variable);
+
+            if(!is_valid_variable(variable)) { 
+                printf("%s", "ERROR");
+                continue;
+            }                                 
             strncpy(two, data+equals+1,strlen(data)-equals);
             two[strlen(data)-equals]=0;
-
             root->data=two;
         }
 
