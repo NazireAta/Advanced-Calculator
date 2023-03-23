@@ -104,7 +104,7 @@ int *not(int ap) {
 }                                       //Test it
 
 
-int search_char(char* str, char to_find) {
+int search_char(char* str, char to_find) { //çalışıyo
     int open_parentheses = 0;
     for(int i = 0; i<strlen(str); i++) {
         if(str[i] == '(') {
@@ -117,7 +117,7 @@ int search_char(char* str, char to_find) {
     }
 } 
 
-char* remove_whitespaces(char* s) {
+char* remove_whitespaces(char* s) {  //çalışıyo
     /*char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
     if (!new_str) {
         return NULL; // error, unable to allocate memory
@@ -132,22 +132,27 @@ char* remove_whitespaces(char* s) {
     return new_str;*/
 
     int size;
-    char *end;
-
+    int end = strlen(s)-1;
+    int begin=0;
     size = strlen(s);
 
-    if (!size)
+
+    if (!size) {
         return s;
+    }
 
-    end = s + size - 1;
-    while (end >= s && isspace(*end))
+    while (end >=0  && isspace(s[end]))
         end--;
-    end = 0;
 
-    while (*s && isspace(*s))
-        s++;
+    while (begin<size && isspace(s[begin]))
+        begin++;
 
-    return s;
+    char* new = (char*)malloc(strlen(s));
+    int len = end - begin + 1;
+
+    strncpy(new, s + begin, len);
+    new[len] = '\0';
+    return new;
 }
 
 
@@ -167,7 +172,7 @@ char* remove_parentheses(const char* data) {
 }
 
 bool is_variable(char* data) {
-    for(int i = 0; i < strlen(data); i+) {
+    for(int i = 0; i < strlen(data); i++) {
         if (!isdigit(data[i])) {
             return true;
         }
@@ -176,7 +181,7 @@ bool is_variable(char* data) {
 }
 
 bool is_valid_variable(char* data) {
-    for(int i = 0; i < strlen(data); i+) {
+    for(int i = 0; i < strlen(data); i++) {
         if(!isalpha(data[i])) {
             return false;
         }
@@ -190,8 +195,9 @@ void divide(struct node* root) {
     char *data = root->data;
     data = remove_whitespaces(data);
     int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
-    char one[strlen(data)];
-    char two[strlen(data)];
+    int len = strlen(data);
+    char one[len];
+    char two[len];
     int parentheses_begin = -1;   //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
     //hala -1 se hiç parantez yok demektir ilk indexte de olabilir
     for(int i = 0; i<strlen(data); i++) {
@@ -286,20 +292,31 @@ void divide(struct node* root) {
         root->operation = "*";
     }    
     else {
-        char fnc_name[parentheses_begin];
+        char fnc_name[3];
         //strncpy(fnc_name, data, parentheses_begin); //works right
         strncpy(fnc_name, data, 3);  //başında zaten boşluk yok ilk 3 karakteri alsın "ls " ya da "ls(" diye kontrol edelim
         int comma;
-        if(strcmp(fnc_name, "xor") == 0) {  //bunlarda şey yapalım xorları ayırıp strip sonra aynı şekilde devam
-            comma = search_char(data+parentheses_begin, ',');   //first find where the comma is, returns length of the first input of xor
+        if(strcmp(fnc_name, "xor") == 0) {  
+            /*comma = search_char(data+parentheses_begin, ',');   
             char one[comma +1];                                 
-            char two[strlen(data)-comma-4];   //4 leri düzeltmek lazım parantez başlangıcı olmalı   //the second input is data-first input-5 chars long
-            strncpy(one, data+4, comma);                        //copy the fist input
-            one[comma] = 0;                                     //end string with 0
+            char two[strlen(data)-comma-4]; 
+            strncpy(one, data+4, comma);                     
+            one[comma] = 0;                     
             strncpy(two, data+comma+5,strlen(data)-comma-6);    
-            two[strlen(data)-comma-6]=0;
-            root->left = newNode(0, one, NULL);
-            root->right = newNode(0,two,NULL);
+            two[strlen(data)-comma-6]=0;*/
+
+
+            comma = search_char(data+parentheses_begin+1, ',');   //works right, dot it also for else ifs
+            char one[comma +1];
+            char two[strlen(data)-comma-parentheses_begin-2];
+            strncpy(one, data+parentheses_begin+1, comma);
+            one[comma] = 0;    
+            strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
+            two[strlen(data)-comma-parentheses_begin-2]=0;
+            char* new_one = remove_whitespaces(one);
+            char* new_two= remove_whitespaces(two);
+            root->left = newNode(0, new_one, NULL);
+            root->right = newNode(0,new_two,NULL);
             root->operation = "xor";
         }
         else if(strcmp(fnc_name, "ls ") || strcmp(fnc_name, "ls(")){
@@ -314,7 +331,7 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "ls";
         }
-        else if(strcmp(fnc_name, "rs")){
+        else if(strcmp(fnc_name, "rs ") || strcmp(fnc_name, "rs(")){
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
             char two[strlen(data)-comma-3];
@@ -326,7 +343,7 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "rs";
         }
-        else if(strcmp(fnc_name, "lr")) {
+        else if(strcmp(fnc_name, "lr ") || strcmp(fnc_name, "lr(")) {
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
             char two[strlen(data)-comma-3];
@@ -339,7 +356,7 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "lr";
         }
-        else if(strcmp(fnc_name, "rr")){
+        else if(strcmp(fnc_name, "rr ") || strcmp(fnc_name, "rr(")){
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
             char two[strlen(data)-comma-3];
@@ -358,7 +375,7 @@ void divide(struct node* root) {
             root->left=one;
             root->operation="not";
         }
-        else if(strcmp(fnc_name, "")) { //bu hariç hepsinde root left rightlardan devam bunda aynı roottan devam ediyoruz
+        else if(parentheses_begin==0) { //bu hariç hepsinde root left rightlardan devam bunda aynı roottan devam ediyoruz
             char one[strlen(data)-2];
             strncpy(one, data+1,strlen(data)-2);
             root->data=one;
