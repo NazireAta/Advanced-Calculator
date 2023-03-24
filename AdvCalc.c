@@ -161,7 +161,7 @@ int *not(int ap) {
 }                                       //Test it
 
 
-int search_char(char* str, char to_find) { //çalışıyo
+
 int search_char(char* str, char to_find) { //çalışıyo
     int open_parentheses = 0;
     for(int i = 0; i<strlen(str); i++) {
@@ -175,7 +175,7 @@ int search_char(char* str, char to_find) { //çalışıyo
     }
 } 
 
-char* remove_whitespaces(char* s) {  //çalışıyo
+char* remove_whitespaces(char* s) {  //çalışıyopull
     /*char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
 char* remove_whitespaces(char* s) {  //çalışıyo
     /*char* new_str = (char*)malloc(strlen(str) + 1); // allocate memory for the new string
@@ -189,30 +189,6 @@ char* remove_whitespaces(char* s) {  //çalışıyo
         }
     }
     new_str[j] = '\0'; // add null terminator to the new string
-    return new_str;*/
-
-    int size;
-    int end = strlen(s)-1;
-    int begin=0;
-    size = strlen(s);
-
-
-    if (!size) {
-        return s;
-    }
-
-    while (end >=0  && isspace(s[end]))
-        end--;
-
-    while (begin<size && isspace(s[begin]))
-        begin++;
-
-    char* new = (char*)malloc(strlen(s));
-    int len = end - begin + 1;
-
-    strncpy(new, s + begin, len);
-    new[len] = '\0';
-    return new;
     return new_str;*/
 
     int size;
@@ -257,11 +233,11 @@ char* remove_parentheses(const char* data) {
 
 bool is_variable(char* data) { //returns  if the given string only consists of alphabetical chars
     for(int i = 0; i < strlen(data); i++) {
-        if (isdigit(data[i])) {
-            return false;
+        if (!isdigit(data[i])) {
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 bool is_valid_variable(char* data) {
@@ -425,7 +401,6 @@ void divide(struct node* root) {
             root->operation = "ls";
         }
         else if(strcmp(fnc_name, "rs ") || strcmp(fnc_name, "rs(")){
-        else if(strcmp(fnc_name, "rs ") || strcmp(fnc_name, "rs(")){
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
             char two[strlen(data)-comma-3];
@@ -437,7 +412,6 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "rs";
         }
-        else if(strcmp(fnc_name, "lr ") || strcmp(fnc_name, "lr(")) {
         else if(strcmp(fnc_name, "lr ") || strcmp(fnc_name, "lr(")) {
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
@@ -451,7 +425,6 @@ void divide(struct node* root) {
             root->right = newNode(0,two,NULL);
             root->operation = "lr";
         }
-        else if(strcmp(fnc_name, "rr ") || strcmp(fnc_name, "rr(")){
         else if(strcmp(fnc_name, "rr ") || strcmp(fnc_name, "rr(")){
             comma = search_char(data+parentheses_begin, ',');
             char one[comma +1];
@@ -471,7 +444,6 @@ void divide(struct node* root) {
             root->left=one;
             root->operation="not";
         }
-        else if(parentheses_begin==0) { //bu hariç hepsinde root left rightlardan devam bunda aynı roottan devam ediyoruz
         else if(parentheses_begin==0) { //bu hariç hepsinde root left rightlardan devam bunda aynı roottan devam ediyoruz
             char one[strlen(data)-2];
             strncpy(one, data+1,strlen(data)-2);
@@ -495,18 +467,6 @@ void divide(struct node* root) {
 
 int execute(struct node* root) {
     if(root->operation==NULL) {            //burda isdecimal gibi bi şeyle variable mı sayı mı bak
-        if(!is_variable) {
-            root->value=atoi(root->data);
-        }
-        else{
-            if(is_valid_variable(root->data)) {
-                //hashten değer getir value ya ver
-            }
-            else {
-                //ERROR
-                return;
-            }
-        }
         if(!is_variable) {
             root->value=atoi(root->data);
         }
