@@ -156,8 +156,8 @@ char* remove_whitespaces(char* s) {  //çalışıyo
 }
 
 
-char* remove_parentheses(const char* data) {
-    int count = 0;
+char* remove_parentheses(const char* data) {            //works right
+    /*int count = 0;
     for (int i = 0; i < strlen(data); i++) {
         if (data[i] == '(') {count++;}
     }
@@ -168,10 +168,15 @@ char* remove_parentheses(const char* data) {
         output[j++] = data[i];
     }
     output[j] = '\0';
+    return output;*/
+
+    char* output = (char*)malloc(strlen(data) - 2 + 1);
+    strncpy(output, data + 1, strlen(data) - 2);
+    output[strlen(data) - 2] = '\0';
     return output;
 }
 
-bool is_variable(char* data) {
+bool is_variable(char* data) {   //works right
     for(int i = 0; i < strlen(data); i++) {
         if (!isdigit(data[i])) {
             return true;
@@ -180,7 +185,7 @@ bool is_variable(char* data) {
     return false;
 }
 
-bool is_valid_variable(char* data) {
+bool is_valid_variable(char* data) {    //works right
     for(int i = 0; i < strlen(data); i++) {
         if(!isalpha(data[i])) {
             return false;
@@ -200,7 +205,7 @@ void divide(struct node* root) {
     char two[len];
     int parentheses_begin = -1;   //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
     //hala -1 se hiç parantez yok demektir ilk indexte de olabilir
-    for(int i = 0; i<strlen(data); i++) {
+    for(int i = 0; i < strlen(data); i++) {
         char curr = data[i]; 
         if(curr == '(') { 
             isTerminal=false;
@@ -212,16 +217,14 @@ void divide(struct node* root) {
             switch(curr) {
                 case '|':
                     isTerminal = false;
-                    if (oridx==-1)
-                    {
+                    if (oridx==-1) {
                         oridx = i;
                         break;
                     }
                     break;
                 case '&':
                     isTerminal = false;
-                    if (andidx==-1)
-                    {
+                    if (andidx==-1) {
                         andidx = i;
                     }
                     break;
