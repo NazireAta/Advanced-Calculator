@@ -465,17 +465,18 @@ void divide(struct node* root) {
     
 }
 
-int execute(struct node* root) {
+int execute(hash_table* ht, struct node* root) {
     if(root->operation==NULL) {            //burda isdecimal gibi bi şeyle variable mı sayı mı bak
         if(!is_variable) {
             root->value=atoi(root->data);
         }
         else{
             if(is_valid_variable(root->data)) {
+                root->value =get(ht,root->data);
                 //hashten değer getir value ya ver
             }
             else {
-                //ERROR
+                printf("Error!")
                 return;
             }
         }
@@ -513,8 +514,7 @@ int execute(struct node* root) {
     }
     else if(root->operation=="not"){
         root->value=not(execute(root->left));
-    }
-    
+    } 
     return root->value;
 }
 
