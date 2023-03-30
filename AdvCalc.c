@@ -284,7 +284,7 @@ void divide(struct node* root) {
         }
     }
     if(open_parentheses != 0){
-        printf("error!");
+        printf("Error!");
     }
 
     else if(oridx != -1) {
@@ -309,7 +309,7 @@ void divide(struct node* root) {
     }
     else if(plusidx != -1) {
         char* one = (char*) malloc(plusidx +1);
-        char* two = (char*) malloc(strlen(plusidx) - timesidx);
+        char* two = (char*) malloc(strlen(data) - plusidx);
         strncpy(one, data, plusidx);
         one[plusidx] = 0;
         strcpy(two, &data[plusidx+1]);
