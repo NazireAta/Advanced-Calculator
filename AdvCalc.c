@@ -7,16 +7,18 @@
 
 #define INT_BITS 32
 #define TABLE_SIZE 128
+bool s_et = false;
+
 
 struct node { //every node of the binary tree must hold
-    int *value;
+    int value;
     char *data;
     char *operation;
     struct node* left;
     struct node* right;
 };
 
-struct node* newNode(int *value, char *data, char *operation) { //value is null if it the node does not have a value yet
+struct node* newNode(int value, char *data, char *operation) { //value is null if it the node does not have a value yet
     struct node* node = (struct node*)malloc(sizeof(struct node));
 
     node->value = value;
@@ -30,7 +32,7 @@ struct node* newNode(int *value, char *data, char *operation) { //value is null 
 
 typedef struct var {
     char* key;
-    int *value;
+    int value;
     struct var* next;
 } var;
 
@@ -41,22 +43,22 @@ typedef struct hash_table {
 int hash(char* key) { //hash function
     int val = 0;
     for(int i = 0; i<strlen(key); i++){
-        char c = key[i];
-        val = (int)(val + ((int) c)*pow(31,i)) % TABLE_SIZE;
+        int c = key[i];
+        val = (int)(val +(int)(c)*pow(31,i)) % TABLE_SIZE;
     }
     return val;
 }
 
-var* create_var(char* key, int *value) { //contructor
+var* create_var(char* key, int value) { //contructor
     var* new_var = (var*)malloc(sizeof(var));
-    new_var->key = key;
+    new_var->key = key; 
     new_var->value = value;
     new_var->next = NULL;
     return new_var;
 }
 
 
-void insert(hash_table* ht, char* key, int *value) { // insert a variable into the hash table
+void insert(hash_table* ht, char* key, int value) { // insert a variable into the hash table
     int index = hash(key);
     var* curr = ht->table[index];
     if (curr == NULL) { //variable is not defined yet
@@ -75,7 +77,7 @@ void insert(hash_table* ht, char* key, int *value) { // insert a variable into t
     }
 }
 
-int* get(hash_table* ht, char* key) { //get the value of the variable from hash table
+int get(hash_table* ht, char* key) { //get the value of the variable from hash table
     int index = hash(key);
     var* curr = ht->table[index];
     while (curr != NULL) {
@@ -86,82 +88,60 @@ int* get(hash_table* ht, char* key) { //get the value of the variable from hash 
 }
 
 
-int *plus(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap + (int) bp;
-    x= ans;                                // adres verme şeyini kaldırınca düzeldi &
-    return x;
+int plus(int ap, int bp) {
+    int ans = ap + bp;      // adres verme şeyini kaldırınca düzeldi &
+    return ans;
 }
 
-int *times(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap * (int) bp;
-    x= ans;
-    return x;
+int times(int ap, int bp) {
+    int ans = ap * bp;
+    return ans;
 }
 
-int *minus(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap - (int) bp;
-    x= ans;
-    return x;
+int minus(int ap, int bp) {
+    int ans = ap -  bp;
+    return ans;
 }
 
-int *and(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap & (int) bp;
-    x= ans;
-    return x;
+int and(int ap, int bp) {
+    int ans =  ap &  bp;
+    return ans;
 }
 
-int *or(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap | (int) bp;
-    x= ans;
-    return x;
+int or(int ap, int bp) {
+    int ans =  ap |  bp;
+    return ans;
 }
 
-int *xor(int *ap, int *bp) {
-    int* x;
-    int ans = (int) ap ^ (int) bp;
-    x= ans;
-    return x;
+int xor(int ap, int bp) {
+    int ans =  ap ^  bp;
+    return ans;
 }
 
-int *left_shift(int *ap, int *ip) {
-    int* x;
-    int ans = (int) ap << (int) ip;
-    x= ans;
-    return x;
+int left_shift(int ap, int ip) {
+    int ans =  ap <<  ip;
+    return ans;
 }
 
-int *right_shift(int *ap, int *ip) {
-    int* x;
-    int ans = (int) ap >> (int) ip;
-    x= ans;
-    return x;
+int right_shift(int ap, int ip) {
+    int ans =  ap >>  ip;
+    return ans;
 }
 
-int *right_rotate(int *ap, int *ip) {      //Test it
-    int* x;
-    int ans = or((int*) ((int) ap >> (int) ip), (int*) ( (int) ap << (INT_BITS - (int) ip)));
-    x= ans;
-    return x;
+int right_rotate(int ap, int ip) {      //Test it
+    int ans = or(( ap >>  ip), (  ap << (INT_BITS -  ip)));
+    return ans;
 }
 
-int *left_rotate(int *ap, int *ip) {       //Test it
-    int* x;
-    int ans = or((int*) ((int) ap << (int) ip), (int*) ( (int) ap >> (INT_BITS - (int) ip)));
-    x= ans;
-    return x;
+int left_rotate(int ap, int ip) {       //Test it
+    int ans = or(( ap <<  ip),(  ap >> (INT_BITS -  ip)));
+    return ans;
 }
 
-int *not(int *ap) {
-    int ans = ~((int) ap);
-    int* x = ans;
-    return x;
+int not(int ap) {
+    int ans = ~(ap);
+    return ans;
 }                                     //Test it
-
 
 
 int search_char(char* str, char to_find) {    // works right
@@ -195,7 +175,7 @@ char* remove_whitespaces(char* s) {  // works right
 
     char* new = (char*)malloc(strlen(s));
     int len = end - begin + 1;
-
+    if(len<0){return "";}
     strncpy(new, s + begin, len);
     new[len] = '\0';
     return new;
@@ -205,6 +185,14 @@ char* remove_parentheses(const char* data) {            //works right
     char* output = (char*)malloc(strlen(data) - 2 + 1);
     strncpy(output, data + 1, strlen(data) - 2);
     output[strlen(data) - 2] = '\0';
+    return output;
+}
+
+char* comments(char* data){
+    int loc = search_char(data,'%');
+    char* output = (char*)malloc(loc+1);
+    strncpy(output, data, loc);
+    output[loc] = '\0';
     return output;
 }
 
@@ -228,7 +216,9 @@ bool is_valid_variable(char* data) {    //works right
     return true;
 }
 
-bool divide(struct node* root) {
+void divide(struct node* root) {
+    if (s_et){return;}
+    
     bool isTerminal = true;
     int open_parentheses = 0;
     root->data = remove_whitespaces(root->data);
@@ -247,37 +237,23 @@ bool divide(struct node* root) {
             switch(curr) {
                 case '|':
                     isTerminal = false;
-                    if (oridx==-1) {
-                        oridx = i;
-                        break;
-                    }
+                    if (oridx==-1) {oridx = i;}
                     break;
                 case '&':
                     isTerminal = false;
-                    if (andidx==-1) {
-                        andidx = i;
-                    }
+                    if (andidx==-1) {andidx = i;}
                     break;
                 case '+':
                     isTerminal = false;
-                    if (plusidx==-1)
-                    {
-                        plusidx = i;
-                    }
+                    if (plusidx==-1){plusidx = i;}
                     break;
                 case '-':
                     isTerminal = false;
-                    if (minusidx==-1)
-                    {
-                        minusidx = i;
-                    }
+                    if (minusidx==-1){minusidx = i;}
                     break;
                 case '*':
                     isTerminal = false;
-                    if (timesidx==-1)
-                    {
-                        timesidx = i;
-                    }
+                    if (timesidx==-1){timesidx = i;}
                     break;
                 default:
                     break;
@@ -287,13 +263,14 @@ bool divide(struct node* root) {
     }
     if(open_parentheses != 0){
         printf("Error unbalanced parentheses!");
-        return false;
+        s_et = true;
+        return;
     }
     //TO DO
     /*
         bosluk basinca terminate etmesin
         makefile
-        comment check
+
         null ve 0i karistirip +2 = 2 diyor
     */
 
@@ -348,9 +325,7 @@ bool divide(struct node* root) {
         root->operation = "*";
     }
     else {
-        if(parentheses_begin==-1) {
-
-        } else{
+        if(parentheses_begin !=-1) {
             char fnc_name[parentheses_begin+1];
             strncpy(fnc_name, data, parentheses_begin);
             fnc_name[parentheses_begin] = 0;
@@ -430,7 +405,8 @@ bool divide(struct node* root) {
 
             else {
                 printf("%s","Error wrong fct name!");   // For wrong function names like zortt
-                return false;
+                s_et = true;
+                return;
             }
         }
 
@@ -442,26 +418,24 @@ bool divide(struct node* root) {
             divide(root->right);
         }
     }
-    return true;
 
 }
 
-int* execute(hash_table* ht, struct node* root) {
+int execute(hash_table* ht, struct node* root) {
+    
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
-            root->value= (int *) atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
+            root->value= atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
         }
         else{
             if(is_valid_variable(root->data)) {
-                root->value = (int *) get(ht, root->data);                 // buraya da
-                if(root->value == NULL) {
-                    root->value= (int*) 0;
-                }
+                root->value = get(ht, root->data);                 // buraya da
                 //hashten değer getir value ya ver
             }
             else {
                 printf("Error invalid var name!");
-                return NULL;
+                s_et = true;
+                return 0;
             }
         }
         return root->value;
@@ -510,20 +484,26 @@ int main() {
     char data[256];
     //scanf("%[^\n]c", data)
     while(fgets(data, 256, stdin)) {
-    //while(true) {
-        struct node* root = newNode(NULL,NULL,NULL);
+        //while(true) {
+        struct node* root = newNode(0,NULL,NULL);
 
         int equals = search_char(data, '=');
         if(equals==strlen(data)){
             //atama yok
-            root->data=data;
+            root->data= remove_whitespaces(data);
+            if(root->data == "") {
+                printf("\n");
+                continue;
+            }
+            if(s_et) {continue;}
             divide(root);
-            int* ans = execute(&ht, root);
+            if(s_et) {continue;}
+            int ans = execute(&ht, root);
             printf("%d\n", ans);
         }
         else{
-            char variable[equals +1];   //variable name is on the right side
-            char two[strlen(data)-equals];        // two is the value to be assigned to the variable
+            char* variable = (char*) malloc(equals +1);   //variable name is on the right side
+            char* two = (char*) malloc(strlen(data)-equals);        // two is the value to be assigned to the variable
             strncpy(variable, data, equals);
             variable[equals] = 0;
             char* var = remove_whitespaces(variable); //name of variable
@@ -532,15 +512,16 @@ int main() {
                 printf("%s\n", "Error LHS invalid var name!");
                 continue; //just keep taking another input
             }
-            strncpy(two, data+equals+1,strlen(data)-equals);
-            two[strlen(data)-equals]=0;
+            strcpy(two, data+equals+1);
+            two[strlen(data)-equals-1]=0;
             root->data=two;
-            if(divide(root)){
-                int ans = *execute(&ht, root);
-                if(ans || ans == 0){
-                    insert(&ht, var, root->value);
-                    printf("%d\n", ans);
-                }
+            if(s_et) {continue;}
+            divide(root);
+            if(s_et) {continue;}
+            int ans = execute(&ht, root);
+            if(ans || (ans == 0)){
+                insert(&ht, var, root->value);
+                printf("%d\n", ans);
             }
         }
     }
