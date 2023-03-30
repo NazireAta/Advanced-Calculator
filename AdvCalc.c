@@ -209,6 +209,7 @@ char* remove_parentheses(const char* data) {            //works right
 }
 
 bool is_variable(char* data) {   //works right
+    if(strlen(data) == 0){return true;}
     for(int i = 0; i < strlen(data); i++) {
         if (!isdigit(data[i])) {
             return true;
@@ -218,6 +219,7 @@ bool is_variable(char* data) {   //works right
 }
 
 bool is_valid_variable(char* data) {    //works right
+    if(strlen(data) == 0){return false;}
     for(int i = 0; i < strlen(data); i++) {
         if(!isalpha(data[i])) {
             return false;
@@ -292,7 +294,7 @@ bool divide(struct node* root) {
         bosluk basinca terminate etmesin
         makefile
         comment check
-
+        null ve 0i karistirip +2 = 2 diyor
     */
 
     else if(oridx != -1) {
