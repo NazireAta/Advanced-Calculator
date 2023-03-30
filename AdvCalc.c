@@ -292,7 +292,7 @@ bool divide(struct node* root) {
         bosluk basinca terminate etmesin
         makefile
         comment check
-
+        
     */
 
     else if(oridx != -1) {
@@ -349,7 +349,7 @@ bool divide(struct node* root) {
         if(parentheses_begin==-1) {
 
         } else{
-            char fnc_name[parentheses_begin+1];
+            char* fnc_name = (char *) malloc(parentheses_begin+1);
             strncpy(fnc_name, data, parentheses_begin);
             fnc_name[parentheses_begin] = 0;
             char* func= remove_whitespaces(fnc_name);
@@ -520,8 +520,8 @@ int main() {
             printf("%d\n", ans);
         }
         else{
-            char variable[equals +1];   //variable name is on the right side
-            char two[strlen(data)-equals];        // two is the value to be assigned to the variable
+            char* variable = (char*) malloc(equals +1);   //variable name is on the right side
+            char* two = (char*) malloc(strlen(data)-equals);        // two is the value to be assigned to the variable
             strncpy(variable, data, equals);
             variable[equals] = 0;
             char* var = remove_whitespaces(variable); //name of variable
