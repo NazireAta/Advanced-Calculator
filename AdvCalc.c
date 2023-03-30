@@ -232,9 +232,6 @@ void divide(struct node* root) {
     root->data = remove_whitespaces(root->data);
     char *data = root->data;
     int oridx = -1, andidx = -1, plusidx = -1, minusidx = -1, timesidx = -1;
-    int len = strlen(data);
-    char one[len];
-    char two[len];
     int parentheses_begin = -1;   //niye actigimi unuttum -> xor mu(!=0) yoksa duz parantez mi(==0) ayirt etmek icin
     for(int i = 0; i < strlen(data); i++) {
         char curr = data[i];
@@ -291,7 +288,9 @@ void divide(struct node* root) {
     }
 
     else if(oridx != -1) {
+        char* one = (char*) malloc(oridx +1);
         strncpy(one, data, oridx);
+        char* two = (char*) malloc(strlen(data) - oridx);
         one[oridx] = 0;
         strcpy(two, &data[oridx+1]);
         root->left = newNode(0, one, NULL);
@@ -299,7 +298,9 @@ void divide(struct node* root) {
         root->operation = "|";
     }
     else if(andidx != -1) {
+        char* one = (char*) malloc(andidx +1);
         strncpy(one, data, andidx);
+        char* two = (char*) malloc(strlen(data) - andidx);
         one[andidx] = 0;
         strcpy(two, &data[andidx+1]);
         root->left = newNode(0, one, NULL);
@@ -307,6 +308,8 @@ void divide(struct node* root) {
         root->operation = "&";
     }
     else if(plusidx != -1) {
+        char* one = (char*) malloc(plusidx +1);
+        char* two = (char*) malloc(strlen(plusidx) - timesidx);
         strncpy(one, data, plusidx);
         one[plusidx] = 0;
         strcpy(two, &data[plusidx+1]);
@@ -315,6 +318,8 @@ void divide(struct node* root) {
         root->operation = "+";
     }
     else if(minusidx != -1) {
+        char* one = (char*) malloc(minusidx +1);
+        char* two = (char*) malloc(strlen(data) - minusidx);
         strncpy(one, data, minusidx);
         one[minusidx] = 0;
         strcpy(two, &data[minusidx+1]);
@@ -323,6 +328,8 @@ void divide(struct node* root) {
         root->operation = "-";
     }
     else if(timesidx != -1) {
+        char* one = (char*) malloc(timesidx +1);
+        char* two = (char*) malloc(strlen(data) - timesidx);
         strncpy(one, data, timesidx);
         one[timesidx] = 0;
         strcpy(two, &data[timesidx+1]);
@@ -345,8 +352,8 @@ void divide(struct node* root) {
             }
             else if(strcmp(func, "xor") == 0) {
                 comma = search_char(data+parentheses_begin+1, ',');   //works right, dot it also for else ifs
-                char one[comma +1];
-                char two[strlen(data)-comma-parentheses_begin-2];
+                char* one = (char*) malloc(comma +1);
+                char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
                 one[comma] = 0;
                 strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
@@ -357,8 +364,8 @@ void divide(struct node* root) {
             }
             else if(strcmp(func, "ls") == 0){
                 comma = search_char(data+parentheses_begin, ',');
-                char one[comma +1];
-                char two[strlen(data)-comma-parentheses_begin-2];
+                char* one = (char*) malloc(comma +1);
+                char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
                 one[comma] = 0;
                 strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
@@ -369,8 +376,8 @@ void divide(struct node* root) {
             }
             else if(strcmp(func, "rs") == 0){
                 comma = search_char(data+parentheses_begin, ',');
-                char one[comma +1];
-                char two[strlen(data)-comma-parentheses_begin-2];
+                char* one = (char*) malloc(comma +1);
+                char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
                 one[comma] = 0;
                 strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
@@ -381,8 +388,8 @@ void divide(struct node* root) {
             }
             else if(strcmp(func, "lr") == 0) {
                 comma = search_char(data+parentheses_begin, ',');
-                char one[comma +1];
-                char two[strlen(data)-comma-parentheses_begin-2];
+                char* one = (char*) malloc(comma +1);
+                char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
                 one[comma] = 0;
                 strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
@@ -393,8 +400,8 @@ void divide(struct node* root) {
             }
             else if(strcmp(func, "rr") == 0) {
                 comma = search_char(data+parentheses_begin, ',');
-                char one[comma +1];
-                char two[strlen(data)-comma-parentheses_begin-2];
+                char* one = (char*) malloc(comma +1);
+                char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
                 one[comma] = 0;
                 strncpy(two, data+comma+parentheses_begin+2,strlen(data)-comma-parentheses_begin-3);
@@ -404,10 +411,10 @@ void divide(struct node* root) {
                 root->operation = "rr";
             }
             else if(strcmp(func, "not") == 0) {
-                char one[strlen(data)-parentheses_begin-1];
+                char* one = (char*)malloc(strlen(data)-parentheses_begin-1);
                 strncpy(one, data+parentheses_begin+1,strlen(data)-parentheses_begin-2);
                 one[strlen(data)-parentheses_begin-2] = 0;
-                root->left=one;
+                root->left = newNode(0,(char *) one,NULL);
                 root->operation="not";
             }
 
@@ -488,7 +495,6 @@ int main() {
     for (int i = 0; i < TABLE_SIZE; i++) {
         ht.table[i] = NULL;
     }
-
     char data[256];
     //scanf("%[^\n]c", data)
     while(fgets(data, 256, stdin)) {
@@ -511,7 +517,7 @@ int main() {
             char* var = remove_whitespaces(variable); //name of variable
 
             if(!is_valid_variable(var)) {
-                printf("%s", "Error!");
+                printf("%s\n", "Error!");
                 continue; //just keep taking another input
             }
             strncpy(two, data+equals+1,strlen(data)-equals);
