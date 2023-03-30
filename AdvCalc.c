@@ -226,7 +226,7 @@ bool is_valid_variable(char* data) {    //works right
     return true;
 }
 
-void divide(struct node* root) {
+bool divide(struct node* root) {
     bool isTerminal = true;
     int open_parentheses = 0;
     root->data = remove_whitespaces(root->data);
@@ -284,8 +284,16 @@ void divide(struct node* root) {
         }
     }
     if(open_parentheses != 0){
-        printf("Error!");
+        printf("Error unbalanced parentheses!");
+        return false;
     }
+    //TO DO
+    /*
+        bosluk basinca terminate etmesin
+        makefile
+        comment check
+
+    */
 
     else if(oridx != -1) {
         char* one = (char*) malloc(oridx +1);
@@ -419,7 +427,8 @@ void divide(struct node* root) {
             }
 
             else {
-                printf("%s","Error!");   // For wrong function names like xort
+                printf("%s","Error wrong fct name!");   // For wrong function names like zortt
+                return false;
             }
         }
 
@@ -431,6 +440,7 @@ void divide(struct node* root) {
             divide(root->right);
         }
     }
+    return true;
 
 }
 
@@ -448,8 +458,8 @@ int* execute(hash_table* ht, struct node* root) {
                 //hashten değer getir value ya ver
             }
             else {
-                printf("Error!");
-                return -1;
+                printf("Error invalid var name!");
+                return NULL;
             }
         }
         return root->value;
@@ -517,16 +527,19 @@ int main() {
             char* var = remove_whitespaces(variable); //name of variable
 
             if(!is_valid_variable(var)) {
-                printf("%s\n", "Error!");
+                printf("%s\n", "Error LHS invalid var name!");
                 continue; //just keep taking another input
             }
             strncpy(two, data+equals+1,strlen(data)-equals);
             two[strlen(data)-equals]=0;
             root->data=two;
-            divide(root);
-            int ans = execute(&ht, root);
-            insert(&ht, var, root->value);
-            printf("%d\n", ans);
+            if(divide(root)){
+                int ans = *execute(&ht, root);
+                if(ans || ans == 0){
+                    insert(&ht, var, root->value);
+                    printf("%d\n", ans);
+                }
+            }
         }
     }
 
