@@ -75,92 +75,92 @@ void insert(hash_table* ht, char* key, int *value) { // insert a variable into t
     }
 }
 
-int get(hash_table* ht, char* key) { //get the value of the variable from hash table
+int* get(hash_table* ht, char* key) { //get the value of the variable from hash table
     int index = hash(key);
     var* curr = ht->table[index];
     while (curr != NULL) {
-        if (strcmp(curr->key, key) == 0) {return curr->value;}
+        if (strcmp(curr->key, key) == 0) { return curr->value; }
         curr = curr->next;
     }
-    return 0; //variables that are not defined yet are 0
+    return 0;
 }
 
 
 int *plus(int *ap, int *bp) {
     int* x;
     int ans = (int) ap + (int) bp;
-    x= &ans;
+    x= ans;                                // adres verme şeyini kaldırınca düzeldi &
     return x;
 }
 
 int *times(int *ap, int *bp) {
     int* x;
     int ans = (int) ap * (int) bp;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *minus(int *ap, int *bp) {
     int* x;
     int ans = (int) ap - (int) bp;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *and(int *ap, int *bp) {
     int* x;
     int ans = (int) ap & (int) bp;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *or(int *ap, int *bp) {
     int* x;
     int ans = (int) ap | (int) bp;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *xor(int *ap, int *bp) {
     int* x;
     int ans = (int) ap ^ (int) bp;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *left_shift(int *ap, int *ip) {
     int* x;
     int ans = (int) ap << (int) ip;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *right_shift(int *ap, int *ip) {
     int* x;
     int ans = (int) ap >> (int) ip;
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *right_rotate(int *ap, int *ip) {      //Test it
     int* x;
     int ans = or((int*) ((int) ap >> (int) ip), (int*) ( (int) ap << (INT_BITS - (int) ip)));
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *left_rotate(int *ap, int *ip) {       //Test it
     int* x;
     int ans = or((int*) ((int) ap << (int) ip), (int*) ( (int) ap >> (INT_BITS - (int) ip)));
-    x= &ans;
+    x= ans;
     return x;
 }
 
 int *not(int *ap) {
     int ans = ~((int) ap);
-    int* x = &ans;
+    int* x = ans;
     return x;
-}                                       //Test it
+}                                     //Test it
 
 
 
@@ -200,7 +200,6 @@ char* remove_whitespaces(char* s) {  // works right
     new[len] = '\0';
     return new;
 }
-
 
 char* remove_parentheses(const char* data) {            //works right
     char* output = (char*)malloc(strlen(data) - 2 + 1);
@@ -431,11 +430,14 @@ void divide(struct node* root) {
 int* execute(hash_table* ht, struct node* root) {
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
-            root->value=atoi(root->data);
+            root->value= (int *) atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
         }
         else{
             if(is_valid_variable(root->data)) {
-                root->value =get(ht,root->data);
+                root->value = (int *) get(ht, root->data);                 // buraya da
+                if(root->value == NULL) {
+                    root->value= (int*) 0;
+                }
                 //hashten değer getir value ya ver
             }
             else {
@@ -487,9 +489,10 @@ int main() {
         ht.table[i] = NULL;
     }
 
-    char* data = "";
-    while(scanf("%s", data)) {
-        data="";
+    char data[256];
+    //scanf("%[^\n]c", data)
+    while(fgets(data, 256, stdin)) {
+    //while(true) {
         struct node* root = newNode(NULL,NULL,NULL);
 
         int equals = search_char(data, '=');
@@ -497,10 +500,10 @@ int main() {
             //atama yok
             root->data=data;
             divide(root);
-            int* ans = execute(&ht,root);
-            printf("%d", *ans);
+            int* ans = execute(&ht, root);
+            printf("%d\n", ans);
         }
-        else{   //first find where the equals sign is
+        else{
             char variable[equals +1];   //variable name is on the right side
             char two[strlen(data)-equals];        // two is the value to be assigned to the variable
             strncpy(variable, data, equals);
@@ -515,23 +518,11 @@ int main() {
             two[strlen(data)-equals]=0;
             root->data=two;
             divide(root);
-            int* ans = execute(&ht,root);
+            int ans = execute(&ht, root);
             insert(&ht, var, root->value);
-            printf("%d", *ans);
+            printf("%d\n", ans);
         }
     }
 
-
-/*     char *data = "lr(mersdajsklda,insadlkdkl)";
-    int comma = search_char(data+3,',');
-    char one[comma +1];
-    char two[strlen(data)-comma-3];
-    printf("%d and value %c \n", comma, data[comma]);
-    strncpy(one, data+3, comma);
-    one[comma] = 0;
-    strncpy(two, data+comma+4,strlen(data)-comma-5);
-    two[strlen(data)-comma-3]=0;
-    printf("%s ve de %s \n",one,two);
- */
 
 }
