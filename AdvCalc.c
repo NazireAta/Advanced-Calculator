@@ -403,7 +403,7 @@ void divide(struct node* root) {
                 root->right = newNode(0,two,NULL);
                 root->operation = "rr";
             }
-            else if(strcmp(func, "not") == 0) {
+            else if(strcmp(func, "not") == 0) {                     //ERROR doğru okuyamıyo
                 char one[strlen(data)-parentheses_begin-1];
                 strncpy(one, data+parentheses_begin+1,strlen(data)-parentheses_begin-2);
                 one[strlen(data)-parentheses_begin-2] = 0;
@@ -499,7 +499,7 @@ int main() {
         if(equals==strlen(data)){
             //atama yok
             root->data=data;
-            divide(root);
+            divide(root);                       //ERROR divide da hata alırsa yine de execute a girip orda da hata veriyo ve ans yazdırmaya çalışıyo
             int* ans = execute(&ht, root);
             printf("%d\n", ans);
         }
@@ -508,7 +508,7 @@ int main() {
             char two[strlen(data)-equals];        // two is the value to be assigned to the variable
             strncpy(variable, data, equals);
             variable[equals] = 0;
-            char* var = remove_whitespaces(variable); //name of variable
+            char* var = remove_whitespaces(variable); 
 
             if(!is_valid_variable(var)) {
                 printf("%s", "Error!");
