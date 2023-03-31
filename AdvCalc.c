@@ -266,12 +266,18 @@ void divide(struct node* root) {
         s_et = true;
         return;
     }
-    //TO DO
-    /*
+    /*TO DO
         bosluk basinca terminate etmesin
+
         makefile
 
         null ve 0i karistirip +2 = 2 diyor
+
+        x = -8
+        Error! -8
+        x = x*2
+        -16
+
     */
 
     else if(oridx != -1) {
@@ -422,7 +428,7 @@ void divide(struct node* root) {
 }
 
 int execute(hash_table* ht, struct node* root) {
-    
+    if(s_et){return 0;} //TO DO: yanlis burasi ama 0dan baska ne donucek ki
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
             root->value= atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
@@ -484,6 +490,7 @@ int main() {
     char data[256];
     //scanf("%[^\n]c", data)
     while(fgets(data, 256, stdin)) {
+        s_et = false;
         //while(true) {
         struct node* root = newNode(0,NULL,NULL);
 
@@ -495,11 +502,9 @@ int main() {
                 printf("\n");
                 continue;
             }
-            if(s_et) {continue;}
             divide(root);
-            if(s_et) {continue;}
             int ans = execute(&ht, root);
-            printf("%d\n", ans);
+            if(!s_et){printf("%d\n", ans);}
         }
         else{
             char* variable = (char*) malloc(equals +1);   //variable name is on the right side
@@ -510,16 +515,16 @@ int main() {
 
             if(!is_valid_variable(var)) {
                 printf("%s\n", "Error LHS invalid var name!");
+                s_et = true;
                 continue; //just keep taking another input
             }
             strcpy(two, data+equals+1);
             two[strlen(data)-equals-1]=0;
             root->data=two;
-            if(s_et) {continue;}
             divide(root);
             if(s_et) {continue;}
             int ans = execute(&ht, root);
-            if(ans || (ans == 0)){
+            if((ans || (ans == 0)) && !s_et){
                 insert(&ht, var, root->value);
                 printf("%d\n", ans);
             }
