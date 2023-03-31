@@ -57,7 +57,6 @@ var* create_var(char* key, long long int value) { //contructor
     return new_var;
 }
 
-
 void insert(hash_table* ht, char* key, long long int value) { // insert a variable into the hash table
     int index = hash(key);
     var* curr = ht->table[index];
@@ -86,7 +85,6 @@ long long int get(hash_table* ht, char* key) { //get the value of the variable f
     }
     return 0;
 }
-
 
 long long int plus(long long int ap, long long int bp) {
     long long int ans = ap + bp;      // adres verme şeyini kaldırınca düzeldi &
@@ -128,12 +126,12 @@ long long int right_shift(long long int ap, long long int ip) {
     return ans;
 }
 
-long long int right_rotate(long long int ap, long long int ip) {      //Test it
+long long int right_rotate(long long int ap, long long int ip) {      
     long long int ans = or(( ap >>  ip), (  ap << (INT_BITS -  ip)));
     return ans;
 }
 
-long long int left_rotate(long long int ap,long long int ip) {       //Test it
+long long int left_rotate(long long int ap,long long int ip) {       
     long long int ans = or(( ap <<  ip),(  ap >> (INT_BITS -  ip)));
     return ans;
 }
@@ -141,19 +139,14 @@ long long int left_rotate(long long int ap,long long int ip) {       //Test it
 long long int not(long long int ap) {
     long long int ans = ~(ap);
     return ans;
-}                                     //Test it
-
+}                                     
 
 int search_char(char* str, char to_find) {    // works right
     int open_parentheses = 0;
     for(int i = 0; i<strlen(str); i++) {
-        if(str[i] == '(') {
-            open_parentheses++;
-        }
+        if(str[i] == '(') {open_parentheses++;}
         else if(str[i] == ')') {open_parentheses--;}
-        else if(open_parentheses==0) {
-            if(str[i]==to_find) {return i;}
-        }
+        else if(open_parentheses==0) {if(str[i]==to_find) {return i;}}
     }
 }
 
@@ -163,9 +156,7 @@ char* remove_whitespaces(char* s) {  // works right
     int begin=0;
     size = strlen(s);
 
-    if (!size) {
-        return s;
-    }
+    if (!size) {return s;}
 
     while (end >=0  && isspace(s[end]))
         end--;
@@ -199,9 +190,7 @@ char* comments(char* data){
 bool is_variable(char* data) {   //works right
     if(strlen(data) == 0){return true;}
     for(int i = 0; i < strlen(data); i++) {
-        if (!isdigit(data[i])) {
-            return true;
-        }
+        if (!isdigit(data[i])) {return true;}
     }
     return false;
 }
@@ -209,9 +198,7 @@ bool is_variable(char* data) {   //works right
 bool is_valid_variable(char* data) {    //works right
     if(strlen(data) == 0){return false;}
     for(int i = 0; i < strlen(data); i++) {
-        if(!isalpha(data[i])) {
-            return false;
-        }
+        if(!isalpha(data[i])) {return false;}
     }
     return true;
 }
@@ -266,17 +253,7 @@ void divide(struct node* root) {
         return;
     }
     /*TO DO
-        bosluk basinca terminate etmesin
-
         makefile
-
-        null ve 0i karistirip +2 = 2 diyor
-
-        x = -8
-        Error! -8
-        x = x*2
-        -16
-
     */
 
     else if(oridx != -1) {
@@ -419,25 +396,20 @@ void divide(struct node* root) {
 
     if (root->left!=NULL) {
         divide(root->left);
-        if (root->right!=NULL) {
-            divide(root->right);
-        }
+        if (root->right!=NULL) {divide(root->right);}
     }
 
 }
 
 long long int execute(hash_table* ht, struct node* root) {
-    if(s_et){return 0;} //TO DO: yanlis burasi ama 0dan baska ne donucek ki
+    if(s_et){return 0;} 
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
             char *ptr;
-            root->value= strtol(root->data,&ptr,10);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
+            root->value= strtoll(root->data,&ptr,10);                       
         }
         else{
-            if(is_valid_variable(root->data)) {
-                root->value = get(ht, root->data);                 // buraya da
-                //hashten değer getir value ya ver
-            }
+            if(is_valid_variable(root->data)) {root->value = get(ht, root->data);}
             else {
                 printf("%s\n","Error invalid var name!");
                 s_et = true;
@@ -488,16 +460,13 @@ int main() {
         ht.table[i] = NULL;
     }
     char datap[256];
-    //scanf("%[^\n]c", data)
     while(fgets(datap, 256, stdin)) {
         s_et = false;
         char *data = comments(datap);
-        //while(true) {
         struct node* root = newNode(0,NULL,NULL);
 
         int equals = search_char(data, '=');
         if(equals==strlen(data)){
-            //atama yok
             root->data= remove_whitespaces(data);
             if(root->data == "") {
                 printf("\n");
@@ -505,7 +474,7 @@ int main() {
             }
             divide(root);
             long long int ans = execute(&ht, root);
-            if(!s_et){printf("%d\n", ans);}
+            if(!s_et){printf("%lld\n", ans);}
         }
         else{
             char* variable = (char*) malloc(equals +1);   //variable name is on the right side
@@ -525,9 +494,9 @@ int main() {
             divide(root);
             if(s_et) {continue;}
             long long int ans = execute(&ht, root);
-            if((ans || (ans == 0)) && !s_et){
+            if(!s_et){
                 insert(&ht, var, root->value);
-                printf("%d\n", ans);
+                printf("%lld\n", ans);
             }
         }
     }
