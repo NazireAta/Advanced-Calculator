@@ -262,7 +262,7 @@ void divide(struct node* root) {
         }
     }
     if(open_parentheses != 0){
-        printf("Error unbalanced parentheses!");
+        printf("%s\n","Error unbalanced parentheses!");
         s_et = true;
         return;
     }
@@ -410,7 +410,7 @@ void divide(struct node* root) {
             }
 
             else {
-                printf("%s","Error wrong fct name!");   // For wrong function names like zortt
+                printf("%s\n","Error wrong fct name!");   // For wrong function names like zortt
                 s_et = true;
                 return;
             }
@@ -439,7 +439,7 @@ int execute(hash_table* ht, struct node* root) {
                 //hashten değer getir value ya ver
             }
             else {
-                printf("Error invalid var name!");
+                printf("%s\n","Error invalid var name!");
                 s_et = true;
                 return 0;
             }
