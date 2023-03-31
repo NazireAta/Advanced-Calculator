@@ -5,20 +5,20 @@
 #include <ctype.h>
 #include <math.h>
 
-#define INT_BITS 32
+#define INT_BITS 64
 #define TABLE_SIZE 128
 bool s_et = false;
 
 
 struct node { //every node of the binary tree must hold
-    int value;
+    long long int value;
     char *data;
     char *operation;
     struct node* left;
     struct node* right;
 };
 
-struct node* newNode(int value, char *data, char *operation) { //value is null if it the node does not have a value yet
+struct node* newNode(long long int value, char *data, char *operation) { //value is null if it the node does not have a value yet
     struct node* node = (struct node*)malloc(sizeof(struct node));
 
     node->value = value;
@@ -32,7 +32,7 @@ struct node* newNode(int value, char *data, char *operation) { //value is null i
 
 typedef struct var {
     char* key;
-    int value;
+    long long int value;
     struct var* next;
 } var;
 
@@ -49,7 +49,7 @@ int hash(char* key) { //hash function
     return val;
 }
 
-var* create_var(char* key, int value) { //contructor
+var* create_var(char* key, long long int value) { //contructor
     var* new_var = (var*)malloc(sizeof(var));
     new_var->key = key; 
     new_var->value = value;
@@ -58,7 +58,7 @@ var* create_var(char* key, int value) { //contructor
 }
 
 
-void insert(hash_table* ht, char* key, int value) { // insert a variable into the hash table
+void insert(hash_table* ht, char* key, long long int value) { // insert a variable into the hash table
     int index = hash(key);
     var* curr = ht->table[index];
     if (curr == NULL) { //variable is not defined yet
@@ -77,7 +77,7 @@ void insert(hash_table* ht, char* key, int value) { // insert a variable into th
     }
 }
 
-int get(hash_table* ht, char* key) { //get the value of the variable from hash table
+long long int get(hash_table* ht, char* key) { //get the value of the variable from hash table
     int index = hash(key);
     var* curr = ht->table[index];
     while (curr != NULL) {
@@ -88,58 +88,58 @@ int get(hash_table* ht, char* key) { //get the value of the variable from hash t
 }
 
 
-int plus(int ap, int bp) {
-    int ans = ap + bp;      // adres verme şeyini kaldırınca düzeldi &
+long long int plus(long long int ap, long long int bp) {
+    long long int ans = ap + bp;      // adres verme şeyini kaldırınca düzeldi &
     return ans;
 }
 
-int times(int ap, int bp) {
-    int ans = ap * bp;
+long long int times(long long int ap, long long int bp) {
+    long long int ans = ap * bp;
     return ans;
 }
 
-int minus(int ap, int bp) {
-    int ans = ap -  bp;
+long long int minus(long long int ap, long long int bp) {
+    long long int ans = ap -  bp;
     return ans;
 }
 
-int and(int ap, int bp) {
-    int ans =  ap &  bp;
+long long int and(long long int ap, long long int bp) {
+    long long int ans =  ap &  bp;
     return ans;
 }
 
-int or(int ap, int bp) {
-    int ans =  ap |  bp;
+long long int or(long long int ap, long long int bp) {
+    long long int ans =  ap |  bp;
     return ans;
 }
 
-int xor(int ap, int bp) {
-    int ans =  ap ^  bp;
+long long int xor(long long int ap, long long int bp) {
+    long long int ans =  ap ^  bp;
     return ans;
 }
 
-int left_shift(int ap, int ip) {
-    int ans =  ap <<  ip;
+long long int left_shift(long long int ap, long long int ip) {
+    long long int ans =  ap <<  ip;
     return ans;
 }
 
-int right_shift(int ap, int ip) {
-    int ans =  ap >>  ip;
+long long int right_shift(long long int ap, long long int ip) {
+    long long int ans =  ap >>  ip;
     return ans;
 }
 
-int right_rotate(int ap, int ip) {      //Test it
-    int ans = or(( ap >>  ip), (  ap << (INT_BITS -  ip)));
+long long int right_rotate(long long int ap, long long int ip) {      //Test it
+    long long int ans = or(( ap >>  ip), (  ap << (INT_BITS -  ip)));
     return ans;
 }
 
-int left_rotate(int ap, int ip) {       //Test it
-    int ans = or(( ap <<  ip),(  ap >> (INT_BITS -  ip)));
+long long int left_rotate(long long int ap,long long int ip) {       //Test it
+    long long int ans = or(( ap <<  ip),(  ap >> (INT_BITS -  ip)));
     return ans;
 }
 
-int not(int ap) {
-    int ans = ~(ap);
+long long int not(long long int ap) {
+    long long int ans = ~(ap);
     return ans;
 }                                     //Test it
 
@@ -218,7 +218,6 @@ bool is_valid_variable(char* data) {    //works right
 
 void divide(struct node* root) {
     if (s_et){return;}
-    
     bool isTerminal = true;
     int open_parentheses = 0;
     root->data = remove_whitespaces(root->data);
@@ -354,7 +353,7 @@ void divide(struct node* root) {
                 root->operation = "xor";
             }
             else if(strcmp(func, "ls") == 0){
-                comma = search_char(data+parentheses_begin, ',');
+                comma = search_char(data+parentheses_begin+1, ',');
                 char* one = (char*) malloc(comma +1);
                 char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
@@ -366,7 +365,7 @@ void divide(struct node* root) {
                 root->operation = "ls";
             }
             else if(strcmp(func, "rs") == 0){
-                comma = search_char(data+parentheses_begin, ',');
+                comma = search_char(data+parentheses_begin+1, ',');
                 char* one = (char*) malloc(comma +1);
                 char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
@@ -378,7 +377,7 @@ void divide(struct node* root) {
                 root->operation = "rs";
             }
             else if(strcmp(func, "lr") == 0) {
-                comma = search_char(data+parentheses_begin, ',');
+                comma = search_char(data+parentheses_begin+1, ',');
                 char* one = (char*) malloc(comma +1);
                 char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
@@ -390,7 +389,7 @@ void divide(struct node* root) {
                 root->operation = "lr";
             }
             else if(strcmp(func, "rr") == 0) {
-                comma = search_char(data+parentheses_begin, ',');
+                comma = search_char(data+parentheses_begin+1, ',');
                 char* one = (char*) malloc(comma +1);
                 char* two = (char*) malloc(strlen(data)-comma-parentheses_begin-2);
                 strncpy(one, data+parentheses_begin+1, comma);
@@ -427,11 +426,12 @@ void divide(struct node* root) {
 
 }
 
-int execute(hash_table* ht, struct node* root) {
+long long int execute(hash_table* ht, struct node* root) {
     if(s_et){return 0;} //TO DO: yanlis burasi ama 0dan baska ne donucek ki
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
-            root->value= atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
+            char *ptr;
+            root->value= strtol(root->data,&ptr,10);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
         }
         else{
             if(is_valid_variable(root->data)) {
@@ -487,10 +487,11 @@ int main() {
     for (int i = 0; i < TABLE_SIZE; i++) {
         ht.table[i] = NULL;
     }
-    char data[256];
+    char datap[256];
     //scanf("%[^\n]c", data)
-    while(fgets(data, 256, stdin)) {
+    while(fgets(datap, 256, stdin)) {
         s_et = false;
+        char *data = comments(datap);
         //while(true) {
         struct node* root = newNode(0,NULL,NULL);
 
@@ -503,7 +504,7 @@ int main() {
                 continue;
             }
             divide(root);
-            int ans = execute(&ht, root);
+            long long int ans = execute(&ht, root);
             if(!s_et){printf("%d\n", ans);}
         }
         else{
@@ -523,7 +524,7 @@ int main() {
             root->data=two;
             divide(root);
             if(s_et) {continue;}
-            int ans = execute(&ht, root);
+            long long int ans = execute(&ht, root);
             if((ans || (ans == 0)) && !s_et){
                 insert(&ht, var, root->value);
                 printf("%d\n", ans);
