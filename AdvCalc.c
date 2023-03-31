@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <math.h>
 
-#define INT_BITS 32
+#define INT_BITS 64
 #define TABLE_SIZE 128
 bool s_et = false;
 
@@ -267,14 +267,8 @@ void divide(struct node* root) {
         return;
     }
     /*TO DO
-        bosluk basinca terminate etmesin
 
         makefile
-
-        null ve 0i karistirip +2 = 2 diyor
-
-        x = -8
-        Error! -8
         x = x*2
         -16
 
@@ -431,11 +425,11 @@ int execute(hash_table* ht, struct node* root) {
     if(s_et){return 0;} //TO DO: yanlis burasi ama 0dan baska ne donucek ki
     if(root->operation==NULL) {
         if(!is_variable(root->data)) {
-            root->value= atoi(root->data);                         //buralara dikkat int dönüyolar (int *) yapılmalı mı
+            root->value= atoi(root->data);                   
         }
         else{
             if(is_valid_variable(root->data)) {
-                root->value = get(ht, root->data);                 // buraya da
+                root->value = get(ht, root->data);
                 //hashten değer getir value ya ver
             }
             else {
@@ -488,10 +482,8 @@ int main() {
         ht.table[i] = NULL;
     }
     char data[256];
-    //scanf("%[^\n]c", data)
     while(fgets(data, 256, stdin)) {
         s_et = false;
-        //while(true) {
         struct node* root = newNode(0,NULL,NULL);
 
         int equals = search_char(data, '=');
