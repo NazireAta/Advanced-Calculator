@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <math.h>
 
 #define INT_BITS 64
 #define TABLE_SIZE 128
@@ -40,11 +39,19 @@ typedef struct hash_table {
     var* table[TABLE_SIZE]; //initialize table of length 128
 } hash_table;
 
+int pow(int a){
+    int val = 1;
+    for(int i = 0; i < a; i++){
+        val = val * 31;
+    }
+    return val;
+}
+
 int hash(char* key) { //hash function
     int val = 0;
     for(int i = 0; i<strlen(key); i++){
         int c = key[i];
-        val = (int)(val +(int)(c)*pow(31,i)) % TABLE_SIZE;
+        val = (int)(val +(int)(c)*pow(i)) % TABLE_SIZE;
     }
     return val;
 }
@@ -252,9 +259,7 @@ void divide(struct node* root) {
         s_et = true;
         return;
     }
-    /*TO DO
-        makefile
-    */
+    
 
     else if(oridx != -1) {
         char* one = (char*) malloc(oridx +1);
