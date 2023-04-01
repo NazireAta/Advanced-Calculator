@@ -1,3 +1,3 @@
 all:
-	gcc -o advcalc AdvCalc.c -lm
+	gcc -o advcalc AdvCalc.c 
 
